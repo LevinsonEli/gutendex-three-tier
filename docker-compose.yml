@@ -1,0 +1,46 @@
+services:
+  ps-db:
+    image: postgres:13
+    restart: always
+    env_file:
+      - .env
+    volumes:
+      - ./db/001_init.sql:/docker-entrypoint-initdb.d/init.sql
+      - ps-volume:/var/lib/postgresql/data
+    networks:
+      - backend
+
+  gutendex-app:
+    build: .
+    image: gutendex-app:1.0
+    restart: always
+    depends_on:
+      - ps-db
+    env_file:
+      - .env
+    networks:
+      - backend
+      - frontend
+
+  nginx:
+    image: nginx:alpine
+    restart: always
+    volumes:
+      - ./nginx/nginx.conf:/etc/nginx/nginx.conf
+      - ./project/static:/usr/share/nginx/html/static
+      - ./project/gutendex/templates:/usr/share/nginx/html
+    ports:
+      - "80:80"
+    networks:
+      - frontend
+    depends_on:
+      - gutendex-app
+
+networks:
+  backend:
+    driver: bridge
+  frontend:
+    driver: bridge
+
+volumes:
+  ps-volume:
