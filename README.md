@@ -25,7 +25,6 @@ This project uses Docker Compose to set up a Flask application with a PostgreSQL
   ```sh
   docker compose up --build
 
-
-3. **Access the Application** 
+3. __Access the Application__ 
 
   Once the containers are up and running, the app will be accessible at http://localhost.
